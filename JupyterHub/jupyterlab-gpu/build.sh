@@ -1,0 +1,1 @@
+docker build -t "bayes-cluster/jupyterlab-gpu:latest" .
