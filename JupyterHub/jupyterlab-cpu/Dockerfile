@@ -21,7 +21,8 @@ RUN apt-get update && \
         apt-get clean all && rm -rf /var/lib/apt/lists/* 
 
 RUN python3 -m pip install jupyter \
-            jupyterlab==3.4.8 \
+            jupyterlab \
+            jupyterhub \
             jupyterlab-git \
             jupyterlab-drawio \
             jupyterlab-kernelspy \
