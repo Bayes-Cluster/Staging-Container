@@ -31,6 +31,7 @@ RUN apt-get update -y \
         ca-certificates \
         lsb-release \
         apt-transport-https \
+        tini \
         file \
         zip \
         tzdata \
@@ -46,7 +47,7 @@ RUN apt-get update -y \
         apt-get clean all && rm -rf /var/lib/apt/lists/*
 
 # Timezone & Locale
-ARG TZ=Aisa/Shanghai
+ENV TZ=Aisa/Shanghai
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen
 ENV LANG=en_US.UTF-8
