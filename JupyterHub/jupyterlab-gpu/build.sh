@@ -1,1 +1,1 @@
-docker build -t "bayes-cluster/jupyterlab-gpu:latest" .
+docker build -t "bayes-cluster/jupyterlab-gpu:0.1.0" .

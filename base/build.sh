@@ -1,1 +1,1 @@
-docker build -t "bayes-cluster/base:latest" .
+docker build -t "bayes-cluster/base:0.1.0" .
