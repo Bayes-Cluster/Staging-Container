@@ -1,5 +1,5 @@
 # NAME baeys-cluster/jupyterlab
-FROM registry.cn-hangzhou.aliyuncs.com/bayes-cluster/base:0.1.0
+FROM registry-vpc.cn-hangzhou.aliyuncs.com/bayes-cluster/base:0.1.0
 
 LABEL org.opencontainers.image.documentation="Oct 08, 2022"
 LABEL org.opencontainers.image.authors="Bayes Cluster Maintenance Group"
