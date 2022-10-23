@@ -1,5 +1,5 @@
 # NAME baeys-cluster/jupyterlab
-FROM registry-vpc.cn-hangzhou.aliyuncs.com/bayes-cluster/base:0.1.0
+FROM registry.cn-hangzhou.aliyuncs.com/bayes-cluster/base:0.1.1
 
 LABEL org.opencontainers.image.documentation="Oct 08, 2022"
 LABEL org.opencontainers.image.authors="Bayes Cluster Maintenance Group"
@@ -11,6 +11,9 @@ LABEL org.opencontainers.image.version="3.0.0"
 
 # Pre-requisites
 SHELL ["/bin/bash", "-O", "extglob", "-c"]
+ARG BASE_USER="bayes"
+ARG UID="1000"
+ARG GID="100"
 USER root
 
 # Install NodeJS & NPM
@@ -30,10 +33,29 @@ RUN python3 -m pip install jupyter \
             jupyter-resource-usage \
             nbdime
 
+RUN jupyter labextension install jupyterlab-plotly
+
+RUN mkdir /etc/jupyterhub
+COPY jupyter_server_config.py /etc/jupyter/
+RUN chown -R ${BASE_USER}:${BASE_USER} /etc/jupyter
 # jupyterlab_slurm jupyter-resource-usage
-USER bayes
+
+USER root
 
 EXPOSE 8888
 ENTRYPOINT ["tini", "--"]
 CMD ["jupyter", "lab"]
 
+USER root
+
+# HEALTHCHECK documentation: https://docs.docker.com/engine/reference/builder/#healthcheck
+# This healtcheck works well for `lab`, `notebook`, `nbclassic`, `server` and `retro` jupyter commands
+# https://github.com/jupyter/docker-stacks/issues/915#issuecomment-1068528799
+HEALTHCHECK  --interval=15s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget -O- --no-verbose --tries=1 --no-check-certificate \
+    http${GEN_CERT:+s}://localhost:8888${JUPYTERHUB_SERVICE_PREFIX:-/}api || exit 1
+
+# Switch back to bayes to avoid accidental container runs as root
+USER bayes
+
+WORKDIR "${HOME}"

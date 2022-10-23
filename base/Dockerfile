@@ -10,15 +10,15 @@ LABEL org.opencontainers.image.version="0.0.1"
 
 # Pre-requisites
 SHELL ["/bin/bash", "-O", "extglob", "-c"]
-RUN mkdir -p /work && chmod 777 /work
-WORKDIR /work
 ARG BASE_USER="bayes"
 ARG UID="1000"
 ARG GID="100"
 
 USER root
 # Environment Variables
-ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND=noninteractive \
+    CONDA_DIR=/opt/conda \
+    CONDA_URL="https://mirrors.bfsu.edu.cn/anaconda/miniconda/Miniconda3-latest-Linux-x86_64.sh"
 
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends \
@@ -94,6 +94,7 @@ RUN apt-get update && \
  	rm -rf /tmp/downloaded_packages/ /tmp/*.rds && \
  	rm -rf /var/lib/apt/lists/*
 
+
 # Add User
 RUN adduser --disabled-password \
     --gecos "Default user" \
@@ -105,11 +106,22 @@ RUN adduser --disabled-password \
     mkdir /home/${BASE_USER}/work && \
     chown -R ${BASE_USER}:${BASE_USER} /home/${BASE_USER}
 
-WORKDIR /home/${BASE_USER}/work
+# Install miniconda 
+ENV PATH="${CONDA_DIR}/bin:${PATH}"
+RUN wget ${CONDA_URL} 
+RUN bash Miniconda3-latest-Linux-x86_64.sh -p ${CONDA_DIR} -b
+RUN rm -rf Miniconda3-latest-Linux-x86_64.sh
+RUN conda config --system --prepend channels conda-forge
+RUN chown ${UID}:${GID} ${CONDA_DIR}
+RUN conda init
+COPY condarc /home/${NB_USER}/.condarc
+
+# Switch back to bayes to avoid accidental container runs as root
 USER ${BASE_USER}
 ENV HOME /home/${BASE_USER}
 ENV USER ${BASE_USER}
 ENV PATH /home/${BASE_USER}/.local/bin:$PATH
 RUN touch /home/${BASE_USER}/.sudo_as_admin_successful
+WORKDIR "${HOME}"
 
 CMD ["/bin/bash"]
