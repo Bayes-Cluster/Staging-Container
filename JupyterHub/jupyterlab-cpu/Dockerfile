@@ -24,9 +24,13 @@ RUN apt-get update && \
         apt-get clean all && rm -rf /var/lib/apt/lists/* 
 
 RUN python3 -m pip install jupyter \
-            jupyterlab==4.0.0a30 \
+            jupyterlab \
             jupyterhub \
             jupyterlab-git \
+            jupyterlab-drawio \
+            jupyterlab-kernelspy \
+            jupyterlab-system-monitor \
+            jupyter-resource-usage \
             nbdime \
             nbgitpuller
 
