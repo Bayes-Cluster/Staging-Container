@@ -1,5 +1,5 @@
 # NAME: bayes-cluster/jupyterlab-gpu 
-FROM bayes-cluster/jupyterlab-cpu:0.1.1
+FROM bayes-cluster/jupyterlab-cpu:0.1.2
 
 LABEL org.opencontainers.image.documentation="Oct 08, 2022"
 LABEL org.opencontainers.image.authors="Bayes Cluster Maintenance Group"

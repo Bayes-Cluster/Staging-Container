@@ -1,5 +1,5 @@
 # NAME baeys-cluster/jupyterlab
-FROM registry.cn-hangzhou.aliyuncs.com/bayes-cluster/base:0.1.1
+FROM registry.cn-hangzhou.aliyuncs.com/bayes-cluster/jupyterlab-cpu:0.1.2
 
 LABEL org.opencontainers.image.documentation="Oct 08, 2022"
 LABEL org.opencontainers.image.authors="Bayes Cluster Maintenance Group"
@@ -23,22 +23,22 @@ RUN apt-get update && \
         npm && \
         apt-get clean all && rm -rf /var/lib/apt/lists/* 
 
-RUN python3 -m pip install jupyter \
-            jupyterlab==4.0.0a30 \
-            jupyterhub \
-            jupyterlab-git \
-            nbdime \
-            nbgitpuller
+RUN python3 -m pip install --pre jupyterlab 
 
-RUN mkdir /etc/jupyterhub
-COPY jupyter_server_config.py /etc/jupyter/
-RUN chown -R ${BASE_USER}:${BASE_USER} /etc/jupyter
+RUN python3 -m pip install jupyterlab-link-share \
+            jupyterlab-webrtc-docprovider \
+            numpy \ 
+            scipy \
+            sympy \
+            plotly \
+            ipywidgets \
+            matplotlib
 
 USER root
-
+RUN bash -c "echo SHELL=/bin/bash >> /etc/environment"
 EXPOSE 8888
 ENTRYPOINT ["tini", "--"]
-CMD ["jupyter", "lab"]
+CMD ["jupyter", "lab", "--collaborative"]
 
 USER root
 
