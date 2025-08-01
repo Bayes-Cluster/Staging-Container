@@ -1,16 +1,16 @@
 # openvscode-server/base/Dockerfile
+ARG TARGETPLATFORM
 
-ARG TARGETPLATFORM # 允许指定目标平台，例如 linux/amd64 或 linux/arm64
+FROM --platform=$TARGETPLATFORM buildpack-deps:22.04-curl
+
+LABEL maintainer="terenceliu98<terenceliu1012@gmail.com>"
+
 ARG VSCODE_VERSION
 ARG RELEASE_ORG="gitpod-io"
 ARG OPENVSCODE_SERVER_ROOT="/home/.openvscode-server"
 ARG USERNAME=jovyan
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
-
-FROM --platform=$TARGETPLATFORM buildpack-deps:22.04-curl
-
-LABEL maintainer="terenceliu98<terenceliu1012@gmail.com>"
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
@@ -39,23 +39,23 @@ RUN if [ -z "${VSCODE_VERSION}" ]; then \
     rm -f ${VSCODE_VERSION}-linux-${arch}.tar.gz
 
 
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USERNAME -m -s /bin/bash $USERNAME \
-    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-    && chmod 0440 /etc/sudoers.d/$USERNAME
+RUN groupadd --gid $USER_GID ${USERNAME} \
+    && useradd --uid $USER_UID --gid ${USERNAME} -m -s /bin/bash ${USERNAME} \
+    && echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME} \
+    && chmod 0440 /etc/sudoers.d/${USERNAME}
 
 RUN chmod g+rw /home && \
-    mkdir -p /home/$USERNAME && \
-    chown -R $USERNAME:$USERNAME /home/$USERNAME && \
-    chown -R $USERNAME:$USERNAME ${OPENVSCODE_SERVER_ROOT}
+    mkdir -p /home/${USERNAME} && \
+    chown -R ${USERNAME}:${USERNAME} /home/${USERNAME} && \
+    chown -R ${USERNAME}:${USERNAME} ${OPENVSCODE_SERVER_ROOT}
 
-USER $USERNAME
+USER ${USERNAME}
 
-WORKDIR /home/$USERNAME/
+WORKDIR /home/${USERNAME}/
 
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
-    HOME=/home/$USERNAME \
+    HOME=/home/${USERNAME} \
     EDITOR=code \
     VISUAL=code \
     GIT_EDITOR="code --wait" \
