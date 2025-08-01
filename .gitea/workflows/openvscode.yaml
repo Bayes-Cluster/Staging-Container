@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     container: catthehacker/ubuntu:act-latest
     env:
+      DOCKER_HOST: tcp://localhost:2375
       REGISTRY_PREFIX: ${{ env.REGISTRY_PREFIX }}
       VSCODE_VERSION: ${{ env.VSCODE_VERSION }}
       TARGETPLATFORM: ${{ env.TARGETPLATFORM }}
@@ -24,6 +25,9 @@ jobs:
       PYTHON_IMAGE_NAME: ${{ env.REGISTRY_PREFIX }}/openvscode-server
       BASE_IMAGE_TAG: ${{ env.VSCODE_VERSION }}-base
       PYTHON_IMAGE_TAG: ${{ env.VSCODE_VERSION }}-python
+    
+    ports:
+      - 2375
 
     steps:
     - name: Checkout repository
