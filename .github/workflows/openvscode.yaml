@@ -6,19 +6,14 @@ on:
       - openvscode-server
   workflow_dispatch:
 
-env:
-  REGISTRY_PREFIX: terencelau
-  TARGETPLATFORM: linux/amd64
-  VSCODE_VERSION: openvscode-server-v1.102.3
-  PROJECT_NAME: openvscode-server
-
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     env:
-      REGISTRY_PREFIX: ${{ env.REGISTRY_PREFIX }}
-      VSCODE_VERSION: ${{ env.VSCODE_VERSION }}
-      TARGETPLATFORM: ${{ env.TARGETPLATFORM }}
+      REGISTRY_PREFIX: terencelau
+      TARGETPLATFORM: linux/amd64
+      VSCODE_VERSION: openvscode-server-v1.102.3
+      PROJECT_NAME: openvscode-server
       BASE_IMAGE_NAME: ${{ env.REGISTRY_PREFIX }}/openvscode-server
       PYTHON_IMAGE_NAME: ${{ env.REGISTRY_PREFIX }}/openvscode-server
       BASE_IMAGE_TAG: ${{ env.VSCODE_VERSION }}-base
