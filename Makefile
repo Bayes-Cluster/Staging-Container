@@ -1,18 +1,16 @@
 # Makefile
-
-REGISTRY_PREFIX ?=
+REGISTRY_PREFIX ?=terencelau
 PROJECT_NAME := openvscode-server
-VSCODE_VERSION ?= openvscode-server-v1.102.3 
+VSCODE_VERSION ?= openvscode-server-v1.102.3
 PIXI_VERSION ?= 0.50.2
-
-TARGETPLATFORM ?=
+TARGETPLATFORM ?= linux/amd64
 
 # base-image
-BASE_IMAGE_NAME := $(REGISTRY_PREFIX)$(PROJECT_NAME)-base
+BASE_IMAGE_NAME := $(REGISTRY_PREFIX)/$(PROJECT_NAME)-base
 BASE_IMAGE_TAG ?= latest
 
 # python-image
-PYTHON_IMAGE_NAME := $(REGISTRY_PREFIX)$(PROJECT_NAME)-python
+PYTHON_IMAGE_NAME := $(REGISTRY_PREFIX)/$(PROJECT_NAME)-python
 PYTHON_IMAGE_TAG ?= latest
 
 # build arguments
