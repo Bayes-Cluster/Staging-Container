@@ -8,7 +8,6 @@ on:
 
 env:
   REGISTRY_PREFIX: terencelau
-  VSCODE_VERSION: openvscode-server-v1.102.3
   TARGETPLATFORM: linux/amd64
   VSCODE_VERSION: openvscode-server-v1.102.3
   PROJECT_NAME: openvscode-server
