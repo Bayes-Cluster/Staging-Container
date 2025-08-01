@@ -55,7 +55,7 @@ push: push-base push-python
 push-base:
 	@echo "Pushing $(BASE_IMAGE_NAME):-$(BASE_IMAGE_TAG)..."
 	docker push $(BASE_IMAGE_NAME):$(BASE_IMAGE_TAG)
-	docker tpush $(BASE_IMAGE_NAME):latest-base
+	docker push $(BASE_IMAGE_NAME):latest-base
 
 push-python:
 	@echo "Pushing $(PYTHON_IMAGE_NAME):$(PYTHON_IMAGE_TAG)..."
