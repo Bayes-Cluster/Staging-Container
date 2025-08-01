@@ -2,16 +2,15 @@
 REGISTRY_PREFIX ?=terencelau
 PROJECT_NAME := openvscode-server
 VSCODE_VERSION ?= openvscode-server-v1.102.3
-PIXI_VERSION ?= 0.50.2
 TARGETPLATFORM ?= linux/amd64
 
 # base-image
-BASE_IMAGE_NAME := $(REGISTRY_PREFIX)/$(PROJECT_NAME)-base
-BASE_IMAGE_TAG ?= latest
+BASE_IMAGE_NAME := $(REGISTRY_PREFIX)/$(PROJECT_NAME)
+BASE_IMAGE_TAG ?= $(VSCODE_VERSION)-base
 
 # python-image
-PYTHON_IMAGE_NAME := $(REGISTRY_PREFIX)/$(PROJECT_NAME)-python
-PYTHON_IMAGE_TAG ?= latest
+PYTHON_IMAGE_NAME := $(REGISTRY_PREFIX)/$(PROJECT_NAME)
+PYTHON_IMAGE_TAG ?= $(VSCODE_VERSION)-python
 
 # build arguments
 BASE_BUILD_ARGS := \
@@ -20,7 +19,7 @@ BASE_BUILD_ARGS := \
 
 PYTHON_BUILD_ARGS := \
     --build-arg TARGETPLATFORM=$(TARGETPLATFORM) \
-    --build-arg PIXI_VERSION=$(PIXI_VERSION)
+	--build-arg REGISTRY_PREFIX=$(REGISTRY_PREFIX)
 
 # Dockerfile's path
 BASE_DOCKERFILE := openvscode-server/base/Dockerfile
@@ -38,26 +37,30 @@ base:
 		-t $(BASE_IMAGE_NAME):$(BASE_IMAGE_TAG) \
 		$(BASE_BUILD_ARGS) \
 		openvscode-server/base
+	docker tag $(BASE_IMAGE_NAME):$(BASE_IMAGE_TAG) $(BASE_IMAGE_NAME):latest-base 
 
 # build openvscode-server-python
-python: base
+python:
 	@echo "Building $(PYTHON_IMAGE_NAME):$(PYTHON_IMAGE_TAG)..."
 	docker build \
 		-f $(PYTHON_DOCKERFILE) \
 		-t $(PYTHON_IMAGE_NAME):$(PYTHON_IMAGE_TAG) \
 		$(PYTHON_BUILD_ARGS) \
 		openvscode-server/python
+	docker tag $(PYTHON_IMAGE_NAME):$(PYTHON_IMAGE_TAG) $(PYTHON_IMAGE_NAME):latest-python
 
 # push to registry
 push: push-base push-python
 
 push-base:
-	@echo "Pushing $(BASE_IMAGE_NAME):$(BASE_IMAGE_TAG)..."
+	@echo "Pushing $(BASE_IMAGE_NAME):-$(BASE_IMAGE_TAG)..."
 	docker push $(BASE_IMAGE_NAME):$(BASE_IMAGE_TAG)
+	docker tpush $(BASE_IMAGE_NAME):latest-base
 
 push-python:
 	@echo "Pushing $(PYTHON_IMAGE_NAME):$(PYTHON_IMAGE_TAG)..."
 	docker push $(PYTHON_IMAGE_NAME):$(PYTHON_IMAGE_TAG)
+	docker push $(PYTHON_IMAGE_NAME):latest-python
 
 # help info
 help:
@@ -73,7 +76,6 @@ help:
 	@echo "Parameters (can be overridden on command line):"
 	@echo "  REGISTRY_PREFIX=<your_registry>/ - Docker registry prefix (e.g., 'myregistry.com/myorg/')"
 	@echo "  VSCODE_VERSION=<tag>               - OpenVSCode Server release tag (default: $(VSCODE_VERSION))"
-	@echo "  PIXI_VERSION=<version>          - Pixi version (default: $(PIXI_VERSION))"
 	@echo "  TARGETPLATFORM=<platform>       - Target platform (e.g., 'linux/amd64', 'linux/arm64')"
 	@echo "  BASE_IMAGE_TAG=<tag>            - Tag for the base image (default: $(BASE_IMAGE_TAG))"
 	@echo "  PYTHON_IMAGE_TAG=<tag>          - Tag for the python image (default: $(PYTHON_IMAGE_TAG))"
