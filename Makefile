@@ -83,6 +83,12 @@ push-python:
 	docker push $(PYTHON_IMAGE_NAME):$(PYTHON_IMAGE_TAG)
 	docker push $(PYTHON_IMAGE_NAME):latest-python
 
+push-miniforge:
+	@echo "Pushing $(MINIFORGE_IMAGE_NAME):$(MINIFORE_IMAGE_TAG)..."
+	docker push $(MINIFOGE_IMAGE_NAME):$(MINIFORGE_IMAGE_TAG)
+	docker push $(MINIFOGE_IMAGE_NAME):latest-miniforge
+
+
 # help info
 help:
 	@echo "Usage:"
@@ -93,6 +99,7 @@ help:
 	@echo "  make push                       - Push all built images to registry"
 	@echo "  make push-base                  - Push only the base image"
 	@echo "  make push-python                - Push only the python image"
+	@echo "  make push-minifoge              - Push only the miniforge image"
 	@echo ""
 	@echo "Parameters (can be overridden on command line):"
 	@echo "  REGISTRY_PREFIX=<your_registry>/ - Docker registry prefix (e.g., 'myregistry.com/myorg/')"
@@ -100,6 +107,7 @@ help:
 	@echo "  TARGETPLATFORM=<platform>       - Target platform (e.g., 'linux/amd64', 'linux/arm64')"
 	@echo "  BASE_IMAGE_TAG=<tag>            - Tag for the base image (default: $(BASE_IMAGE_TAG))"
 	@echo "  PYTHON_IMAGE_TAG=<tag>          - Tag for the python image (default: $(PYTHON_IMAGE_TAG))"
+	@echo "  MINIFOGE_IMAGE_TAG=<tag>        - Tag for the minifoge image (default: $(MINIFORGE_IMAGE_TAG))"
 	@echo ""
 	@echo "Example:"
 	@echo "  make VSCODE_VERSION=v1.87.0 PIXI_VERSION=0.51.0 TARGETPLATFORM=linux/arm64"
