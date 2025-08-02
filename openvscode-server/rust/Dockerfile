@@ -1,9 +1,7 @@
-# openvscode-server/rust/Dockerfile
-
 ARG TARGETPLATFORM
 ARG REGISTRY_PREFIX
 
-FROM --platform=$TARGETPLATFORM $REGISTRY_PREFIX/openvscode-server:latest-base
+FROM --platform=$TARGETPLATFORM $REGISTRY_PREFIX/openvscode-server:latest-bas
 
 USER root
 

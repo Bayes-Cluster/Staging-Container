@@ -76,7 +76,7 @@ jobs:
     - name: Build rust image
       run: |
         docker build \
-          -f openvscode-server/miniforge/Dockerfile \
+          -f openvscode-server/rust/Dockerfile \
           -t $IMAGE_NAME:$RUST_IMAGE_TAG \
           --build-arg TARGETPLATFORM=$TARGETPLATFORM \
           --build-arg REGISTRY_PREFIX=$REGISTRY_PREFIX \
