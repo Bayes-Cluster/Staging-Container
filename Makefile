@@ -36,7 +36,7 @@ BASE_DOCKERFILE := openvscode-server/base/Dockerfile
 PYTHON_DOCKERFILE := openvscode-server/python/Dockerfile
 MINIFORGE_DOCKERFILE := openvscode-server/miniforge/Dockerfile
 
-.PHONY: all base python clean push
+.PHONY: all base python minifoge clean push
 
 all: base python miniforge
 
@@ -61,7 +61,7 @@ python:
 	docker tag $(PYTHON_IMAGE_NAME):$(PYTHON_IMAGE_TAG) $(PYTHON_IMAGE_NAME):latest-python
 
 # build openvscode-server-minifoge
-python:
+minifoge:
 	@echo "Building $(MINIFORGE_IMAGE_NAME):$(MINIFORGE_IMAGE_TAG)..."
 	docker build \
 		-f $(MINIFORGE_DOCKERFILE) \
