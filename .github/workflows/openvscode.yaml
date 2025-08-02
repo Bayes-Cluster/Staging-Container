@@ -10,10 +10,12 @@ env:
   REGISTRY_PREFIX: terencelau
   TARGETPLATFORM: linux/amd64
   VSCODE_VERSION: openvscode-server-v1.102.3
+  MINIFORGE_VERSION: 25.3.1-0
   PROJECT_NAME: openvscode-server
   IMAGE_NAME: terencelau/openvscode-server
   BASE_IMAGE_TAG: openvscode-server-v1.102.3-base
   PYTHON_IMAGE_TAG: openvscode-server-v1.102.3-python
+  MINIFORGE_IMAGE_TAG: openvscode-server-v1.102.3-miniforge
 
 jobs:
   build-and-push:
@@ -56,6 +58,18 @@ jobs:
           openvscode-server/python
         docker tag $IMAGE_NAME:$PYTHON_IMAGE_TAG $IMAGE_NAME:latest-python
 
+    - name: Build miniforge image
+      run: |
+        docker build \
+          -f openvscode-server/python/Dockerfile \
+          -t $IMAGE_NAME:$MINIFORGE_IMAGE_TAG \
+          --build-arg TARGETPLATFORM=$TARGETPLATFORM \
+          --build-arg REGISTRY_PREFIX=$REGISTRY_PREFIX \
+          --build-arg MINIFORGE_VERSION=$MINIFORGE_VERSION \
+          openvscode-server/miniforge
+        docker tag $IMAGE_NAME:$MINIFORGE_IMAGE_TAG $IMAGE_NAME:latest-miniforge
+
+
     - name: Push base image
       run: |
         docker push $IMAGE_NAME:$BASE_IMAGE_TAG
@@ -65,3 +79,8 @@ jobs:
       run: |
         docker push $IMAGE_NAME:$PYTHON_IMAGE_TAG
         docker push $IMAGE_NAME:latest-python
+
+    - name: Push python image
+      run: |
+        docker push $IMAGE_NAME:$MINIFORGE_IMAGE_TAG
+        docker push $IMAGE_NAME:latest-miniforge

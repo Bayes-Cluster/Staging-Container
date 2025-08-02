@@ -2,6 +2,7 @@
 REGISTRY_PREFIX ?=terencelau
 PROJECT_NAME := openvscode-server
 VSCODE_VERSION ?= openvscode-server-v1.102.3
+MINIFORGE_VERSION ?= 25.3.1-0
 TARGETPLATFORM ?= linux/amd64
 
 # base-image
@@ -12,6 +13,10 @@ BASE_IMAGE_TAG ?= $(VSCODE_VERSION)-base
 PYTHON_IMAGE_NAME := $(REGISTRY_PREFIX)/$(PROJECT_NAME)
 PYTHON_IMAGE_TAG ?= $(VSCODE_VERSION)-python
 
+# miniforge-image
+MINIFORGE_IMAGE_NAME := $(REGISTRY_PREFIX)/$(PROJECT_NAME)
+MINIFORGE_IMAGE_TAG ?= $(VSCODE_VERSION)-miniforge
+
 # build arguments
 BASE_BUILD_ARGS := \
     --build-arg TARGETPLATFORM=$(TARGETPLATFORM) \
@@ -21,13 +26,19 @@ PYTHON_BUILD_ARGS := \
     --build-arg TARGETPLATFORM=$(TARGETPLATFORM) \
 	--build-arg REGISTRY_PREFIX=$(REGISTRY_PREFIX)
 
+MINIFORGE_BUILD_ARGS := \
+	--build-arg TARGETPLATFORM=$(TARGETPLATFORM) \
+	--build-arg REGISTRY_PREFIX=$(REGISTRY_PREFIX) \
+	--build-arg MINIFORGE_VERSION=$(MINIFORGE_VERSION)
+
 # Dockerfile's path
 BASE_DOCKERFILE := openvscode-server/base/Dockerfile
 PYTHON_DOCKERFILE := openvscode-server/python/Dockerfile
+MINIFORGE_DOCKERFILE := openvscode-server/miniforge/Dockerfile
 
 .PHONY: all base python clean push
 
-all: base python
+all: base python miniforge
 
 # build openvscode-server-base
 base:
@@ -48,6 +59,16 @@ python:
 		$(PYTHON_BUILD_ARGS) \
 		openvscode-server/python
 	docker tag $(PYTHON_IMAGE_NAME):$(PYTHON_IMAGE_TAG) $(PYTHON_IMAGE_NAME):latest-python
+
+# build openvscode-server-minifoge
+python:
+	@echo "Building $(MINIFORGE_IMAGE_NAME):$(MINIFORGE_IMAGE_TAG)..."
+	docker build \
+		-f $(MINIFORGE_DOCKERFILE) \
+		-t $(MINIFORGE_IMAGE_NAME):$(MINIFORGE_IMAGE_TAG) \
+		$(MINIFORGE_BUILD_ARGS) \
+		openvscode-server/python
+	docker tag $(MINIFORGE_IMAGE_NAME):$(MINIFORGE_IMAGE_TAG) $(MINIFORGE_IMAGE_NAME):latest-miniforge
 
 # push to registry
 push: push-base push-python
