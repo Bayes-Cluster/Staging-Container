@@ -61,7 +61,7 @@ jobs:
     - name: Build miniforge image
       run: |
         docker build \
-          -f openvscode-server/python/Dockerfile \
+          -f openvscode-server/miniforge/Dockerfile \
           -t $IMAGE_NAME:$MINIFORGE_IMAGE_TAG \
           --build-arg TARGETPLATFORM=$TARGETPLATFORM \
           --build-arg REGISTRY_PREFIX=$REGISTRY_PREFIX \
