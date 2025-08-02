@@ -40,6 +40,7 @@ jobs:
         echo "BASE_IMAGE_TAG=${{ env.VSCODE_VERSION }}-base" >> $GITHUB_ENV
         echo "PYTHON_IMAGE_TAG=${{ env.VSCODE_VERSION }}-python" >> $GITHUB_ENV
         echo "MINIFORGE_IMAGE_TAG=${{ env.VSCODE_VERSION }}-miniforge-${{ env.MINIFORGE_VERSION }}" >> $GITHUB_ENV
+        echo "RUST_IMAGE_TAG=${{ env.VSCODE_VERSION }}-rust" >> $GITHUB_ENV
 
     - name: Build base image
       run: |
@@ -71,6 +72,16 @@ jobs:
           --build-arg MINIFORGE_VERSION=$MINIFORGE_VERSION \
           openvscode-server/miniforge
         docker tag $IMAGE_NAME:$MINIFORGE_IMAGE_TAG $IMAGE_NAME:latest-miniforge
+
+    - name: Build rust image
+      run: |
+        docker build \
+          -f openvscode-server/miniforge/Dockerfile \
+          -t $IMAGE_NAME:$RUST_IMAGE_TAG \
+          --build-arg TARGETPLATFORM=$TARGETPLATFORM \
+          --build-arg REGISTRY_PREFIX=$REGISTRY_PREFIX \
+          openvscode-server/rust
+        docker tag $IMAGE_NAME:$MINIFORGE_IMAGE_TAG $IMAGE_NAME:latest-rust
 
 
     - name: Push base image
