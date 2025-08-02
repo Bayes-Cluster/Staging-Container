@@ -13,9 +13,6 @@ env:
   MINIFORGE_VERSION: 25.3.1-0
   PROJECT_NAME: openvscode-server
   IMAGE_NAME: terencelau/openvscode-server
-  BASE_IMAGE_TAG: openvscode-server-v1.102.3-base
-  PYTHON_IMAGE_TAG: openvscode-server-v1.102.3-python
-  MINIFORGE_IMAGE_TAG: openvscode-server-v1.102.3-miniforge
 
 jobs:
   build-and-push:
@@ -37,6 +34,12 @@ jobs:
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
+
+    - name: Set dynamic image tag
+      run: |
+        echo "BASE_IMAGE_TAG=${{ env.VSCODE_VERSION }}-base" >> $GITHUB_ENV
+        echo "PYTHON_IMAGE_TAG=${{ env.VSCODE_VERSION }}-python" >> $GITHUB_ENV
+        echo "MINIFORGE_IMAGE_TAG=${{ env.VSCODE_VERSION }}-miniforge-${{ env.MINIFORGE_VERSION }}" >> $GITHUB_ENV
 
     - name: Build base image
       run: |
