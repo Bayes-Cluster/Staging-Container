@@ -1,7 +1,7 @@
 ARG TARGETPLATFORM
 ARG REGISTRY_PREFIX
 
-FROM --platform=$TARGETPLATFORM $REGISTRY_PREFIX/openvscode-server:latest-bas
+FROM --platform=$TARGETPLATFORM $REGISTRY_PREFIX/openvscode-server:latest-base
 
 USER root
 
