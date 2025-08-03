@@ -60,7 +60,7 @@ jobs:
       run: |
         docker build \
           -f kubeflow/jupyter/Dockerfile \
-          -t $IMAGE_NAME:$BASE_IMAGE_TAG \
+          -t $IMAGE_NAME:$JUPYTER_BASE_IMAGE_TAG \
           --build-arg REGISTRY_PREFIX=$REGISTRY_PREFIX \
           --build-arg JUPYTER_VERSION=$JUPYTER_VERSION \
           --build-arg JUPYTERLAB_VERSION=$JUPYTERLAB_VERSION \
@@ -69,4 +69,14 @@ jobs:
           --build-arg PIP_VERSION=$PIP_VERSION \
           --build-arg PYTHON_VERSION=$PYTHON_VERSION \
           kubeflow/jupyter
-        docker tag $IMAGE_NAME:$BASE_IMAGE_TAG $IMAGE_NAME:latest-jupyter-base
+        docker tag $IMAGE_NAME:$JUPYTER_BASE_IMAGE_TAG $IMAGE_NAME:latest-jupyter-base
+
+    - name: Push base image
+      run: |
+        docker push $IMAGE_NAME:$BASE_IMAGE_TAG
+        docker push $IMAGE_NAME:latest-base
+
+    - name: Push jupyter-base image
+      run: |
+        docker push $IMAGE_NAME:$PYTHON_IMAGE_TAG
+        docker push $IMAGE_NAME:latest-python
