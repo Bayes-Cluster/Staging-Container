@@ -10,12 +10,13 @@ env:
   REGISTRY_PREFIX: terencelau
   TARGETPLATFORM: linux/amd64
   PROJECT_NAME: kubeflow
-  BASE_IMAGE: ubuntu:24.04
+  BASE_IMAGE: ubuntu
+  BASE_IMAGE_VERSION: 24.04
   IMAGE_NAME: terencelau/kubeflow
-  JUPYTERLAB_VERSION: 4.3.5
   JUPYTER_VERSION: 7.3.2
-  NODE_MAJOR_VERSION: 20
+  JUPYTERLAB_VERSION: 4.3.5
   MINIFORGE_VERSION: 25.3.1-0
+  NODE_MAJOR_VERSION: 20
   PIP_VERSION: 24.3.1
   PYTHON_VERSION: 3.11.11
 
@@ -42,7 +43,8 @@ jobs:
 
     - name: Set dynamic image tag
       run: |
-        echo "BASE_IMAGE_TAG=${{ env.PROJECDT_NAME }}-${{ env.BASE_IMAGE }}-base" >> $GITHUB_ENV
+        echo "BASE_IMAGE_TAG=${{ env.PROJECT_NAME }}-${{ env.BASE_IMAGE }}-${{ env.BASE_IMAGE_VERSION }}" >> $GITHUB_ENV
+        echo "JUPYTER_BASE_IMAGE_TAG=${{ env.PROJECT_NAME }}-${{ env.BASE_IMAGE }}-${{ env.BASE_IMAGE_VERSION }}"-jupyter-${{ JUPYTER_VERSION}} >> $GITHUB_ENV
 
     - name: Build base image
       run: |
@@ -50,5 +52,20 @@ jobs:
           -f kubeflow/base/Dockerfile \
           -t $IMAGE_NAME:$BASE_IMAGE_TAG \
           --build-arg BASE_IMAGE:$BASE_IMAGE \
+          --build-arg BASE_IMAGE_VERSION:$BASE_IMAGE_VERSION \
           kubwflow/base
         docker tag $IMAGE_NAME:$BASE_IMAGE_TAG $IMAGE_NAME:latest-base
+
+    - name: Build jupyter-base image
+      run: |
+        docker build \
+          -f kubeflow/jupyter/Dockerfile \
+          -t $IMAGE_NAME:$BASE_IMAGE_TAG \
+          --build-arg JUPYTER_VERSION=$JUPYTER_VERSION \
+          --build-arg JUPYTERLAB_VERSION=$JUPYTERLAB_VERSION \
+          --build-arg MINIFORGE_VERSION=$MINIFORGE_VERSION \
+          --build-arg NODE_MAJOR_VERSION=$NODE_MAJOR_VERSION \
+          --build-arg PIP_VERSION=$PIP_VERSION \
+          --build-arg PYTHON_VERSION=$PYTHON_VERSION \
+          kubwflow/jupyter
+        docker tag $IMAGE_NAME:$BASE_IMAGE_TAG $IMAGE_NAME:latest-jupyter-base
