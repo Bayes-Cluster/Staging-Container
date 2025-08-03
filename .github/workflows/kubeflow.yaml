@@ -50,7 +50,7 @@ jobs:
       run: |
         docker build \
           -f kubeflow/base/Dockerfile \
-          -t $IMAGE_NAME=$BASE_IMAGE_TAG \
+          -t $IMAGE_NAME:$BASE_IMAGE_TAG \
           --build-arg BASE_IMAGE=$BASE_IMAGE \
           --build-arg BASE_IMAGE_VERSION=$BASE_IMAGE_VERSION \
           kubeflow/base
