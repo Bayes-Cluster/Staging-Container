@@ -1,7 +1,7 @@
-# Artifex Intelligence - WuMing Lab GitOps Repository
+# Staging Container
 
-## To Build
 
-```
-make RELEASE_TAG=openvscode-server-v1.102.3 PIXI_VERSION=0.50.2
-```
+## To Build 
+
+1. To build the image in local environment, please follow the `Makefile`
+2. To build the image with github action, please check `./.github/workflows/`

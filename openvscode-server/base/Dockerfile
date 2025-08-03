@@ -13,9 +13,32 @@ ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        git \
-        sudo \
-        libatomic1 \
+    vim \
+    git \
+    sudo \
+    libatomic1 \
+    openssh-client \
+    build-essential \
+    curl \
+    wget \
+    ca-certificates \
+    unzip \
+    zip \
+    gnupg \
+    lsb-release \
+    software-properties-common \
+    locales \
+    libssl-dev \
+    libffi-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    zlib1g-dev \
+    libncursesw5-dev \
+    libxml2-dev \
+    libxmlsec1-dev \
+    tk-dev \
+    liblzma-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /home/
