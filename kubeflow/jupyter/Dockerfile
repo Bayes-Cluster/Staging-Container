@@ -108,40 +108,4 @@ RUN cp -p -r -T "${HOME}" "${HOME_TMP}" \
     # give group same access as user (needed for OpenShift)
  && chmod -R g=u "${HOME_TMP}"
 
-
-# install - conda packages
-# NOTE: we use mamba to speed things up
-RUN mamba install -y -q \
-    altair \
-    beautifulsoup4==4.13.3 \
-    bokeh==3.6.3 \
-    bottleneck \
-    brotli \
-    cloudpickle \
-    dask==2024.12.1 \
-    dill \
-    h5py \
-    ipympl \
-    matplotlib==3.10.0 \
-    numba \
-    numexpr \
-    numpy==1.26.4 \
-    openblas==0.3.28 \
-    openpyxl \
-    pandas==2.2.3 \
-    patsy \
-    protobuf \
-    pytables==3.10.2 \
-    scikit-image==0.25.1 \
-    scikit-learn==1.6.1 \
-    scipy==1.15.1 \
-    seaborn==0.13.2 \
-    sqlalchemy==2.0.38 \
-    statsmodels \
-    sympy \
-    vincent \
-    xgboost==2.1.4 \
-    xlrd \
- && mamba clean -a -f -y
-
 EXPOSE 8888
