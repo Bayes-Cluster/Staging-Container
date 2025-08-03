@@ -61,6 +61,7 @@ jobs:
         docker build \
           -f kubeflow/jupyter/Dockerfile \
           -t $IMAGE_NAME:$BASE_IMAGE_TAG \
+          --build-arg REGISTRY_PREFIX=$REGISTRY_PREFIX \
           --build-arg JUPYTER_VERSION=$JUPYTER_VERSION \
           --build-arg JUPYTERLAB_VERSION=$JUPYTERLAB_VERSION \
           --build-arg MINIFORGE_VERSION=$MINIFORGE_VERSION \
