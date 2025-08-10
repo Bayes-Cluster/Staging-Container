@@ -78,5 +78,5 @@ jobs:
 
     - name: Push jupyter-base image
       run: |
-        docker push $IMAGE_NAME:$PYTHON_IMAGE_TAG
-        docker push $IMAGE_NAME:latest-python
+        docker push $IMAGE_NAME:$JUPYTER_BASE_IMAGE_TAG
+        docker push $IMAGE_NAME:latest-jupyter-base
