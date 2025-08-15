@@ -72,6 +72,10 @@ RUN chmod g+rw /home && \
     chown -R ${USERNAME}:${USERNAME} /home/${USERNAME} && \
     chown -R ${USERNAME}:${USERNAME} ${OPENVSCODE_SERVER_ROOT}
 
+RUN mkdir -p /home/${USERNAME}/.config && \
+    chown ${USERNAME}:${USERNAME} /home/jovyan/.config && \
+    chmod 700 /home/${USERNAME}/.config
+
 USER ${USERNAME}
 
 WORKDIR /home/${USERNAME}/
