@@ -98,7 +98,7 @@ jobs:
           openvscode-server/rust
         docker tag $IMAGE_NAME:$RUST_IMAGE_TAG $IMAGE_NAME:latest-rust
 
-    - name: Push prust image
+    - name: Push rust image
       run: |
         docker push $IMAGE_NAME:$RUST_IMAGE_TAG
         docker push $IMAGE_NAME:latest-rust
