@@ -71,7 +71,9 @@ RUN chmod g+rw /home && \
     mkdir -p /home/${USERNAME} && \
     chown -R ${USERNAME}:${USERNAME} /home/${USERNAME} && \
     chown -R ${USERNAME}:${USERNAME} ${OPENVSCODE_SERVER_ROOT} && \
-    chmod 755 /home/${USERNAME}
+    chmod 755 /home/${USERNAME} && \
+    mkdir -p /home/${USERNAME}/srv && \
+    chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/srv 
 
 USER ${USERNAME}
 
