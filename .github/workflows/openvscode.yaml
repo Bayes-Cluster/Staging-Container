@@ -52,6 +52,11 @@ jobs:
           openvscode-server/base
         docker tag $IMAGE_NAME:$BASE_IMAGE_TAG $IMAGE_NAME:latest-base
 
+    - name: Push base image
+      run: |
+        docker push $IMAGE_NAME:$BASE_IMAGE_TAG
+        docker push $IMAGE_NAME:latest-base
+
     - name: Build python image
       run: |
         docker build \
@@ -61,6 +66,11 @@ jobs:
           --build-arg REGISTRY_PREFIX=$REGISTRY_PREFIX \
           openvscode-server/python
         docker tag $IMAGE_NAME:$PYTHON_IMAGE_TAG $IMAGE_NAME:latest-python
+
+    - name: Push python image
+      run: |
+        docker push $IMAGE_NAME:$PYTHON_IMAGE_TAG
+        docker push $IMAGE_NAME:latest-python
 
     - name: Build miniforge image
       run: |
@@ -73,6 +83,11 @@ jobs:
           openvscode-server/miniforge
         docker tag $IMAGE_NAME:$MINIFORGE_IMAGE_TAG $IMAGE_NAME:latest-miniforge
 
+    - name: Push minifoge image
+      run: |
+        docker push $IMAGE_NAME:$MINIFORGE_IMAGE_TAG
+        docker push $IMAGE_NAME:latest-miniforge
+
     - name: Build rust image
       run: |
         docker build \
@@ -81,20 +96,9 @@ jobs:
           --build-arg TARGETPLATFORM=$TARGETPLATFORM \
           --build-arg REGISTRY_PREFIX=$REGISTRY_PREFIX \
           openvscode-server/rust
-        docker tag $IMAGE_NAME:$MINIFORGE_IMAGE_TAG $IMAGE_NAME:latest-rust
+        docker tag $IMAGE_NAME:$RUST_IMAGE_TAG $IMAGE_NAME:latest-rust
 
-
-    - name: Push base image
+    - name: Push prust image
       run: |
-        docker push $IMAGE_NAME:$BASE_IMAGE_TAG
-        docker push $IMAGE_NAME:latest-base
-
-    - name: Push python image
-      run: |
-        docker push $IMAGE_NAME:$PYTHON_IMAGE_TAG
-        docker push $IMAGE_NAME:latest-python
-
-    - name: Push python image
-      run: |
-        docker push $IMAGE_NAME:$MINIFORGE_IMAGE_TAG
-        docker push $IMAGE_NAME:latest-miniforge
+        docker push $IMAGE_NAME:$RUST_IMAGE_TAG
+        docker push $IMAGE_NAME:latest-rust
