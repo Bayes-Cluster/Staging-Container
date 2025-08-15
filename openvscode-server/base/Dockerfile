@@ -70,15 +70,12 @@ RUN groupadd --gid $USER_GID ${USERNAME} \
 RUN chmod g+rw /home && \
     mkdir -p /home/${USERNAME} && \
     chown -R ${USERNAME}:${USERNAME} /home/${USERNAME} && \
-    chown -R ${USERNAME}:${USERNAME} ${OPENVSCODE_SERVER_ROOT}
-
-RUN mkdir -p /home/${USERNAME}/.config && \
-    chown ${USERNAME}:${USERNAME} /home/jovyan/.config && \
-    chmod 700 /home/${USERNAME}/.config
+    chown -R ${USERNAME}:${USERNAME} ${OPENVSCODE_SERVER_ROOT} && \
+    chmod 755 /home/${USERNAME}
 
 USER ${USERNAME}
 
-WORKDIR /home/${USERNAME}/
+WORKDIR /home/${USERNAME}/srv/
 
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
