@@ -87,7 +87,7 @@ jobs:
           --build-arg OCHAUDIO_VERSION=$TORCHAUDIO_VERSION \
           --build-arg TORCHVISION_VERSION=$TORCHVISION_VERSION \
           kubeflow/jupyter-cuda-pytorch
-      docker tag $IMAGE_NAME:$JUPYTER_CUDA_PYTORCH_IMAGE_TAG $IMAGE_NAME:latest-jupyter-cuda-pytorch
+          docker tag $IMAGE_NAME:$JUPYTER_CUDA_PYTORCH_IMAGE_TAG $IMAGE_NAME:latest-jupyter-cuda-pytorch
 
     - name: Push base image
       run: |
