@@ -31,6 +31,6 @@ RUN mamba install -y -q \
     xgboost==2.1.4 \
  && mamba clean -a -f -y
 
-COPY --chown =${NB_USER}:${NB_GID} requirements.txt /tmp 
+COPY --chown==${NB_USER}:${NB_GID} requirements.txt /tmp 
 RUN python3 -m pip install -r /tmp/requirements.txt --quiet --no-cache-dir \
   && rm -f /tmp/requirements.txt
