@@ -12,7 +12,7 @@ ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 ENV NVIDIA_REQUIRE_CUDA "cuda>=12.4"
 
 RUN python3 -m pip install --quiet --no-cache-dir --index-url https://download.pytorch.org/whl/cu124 \
-  torch==${PYTORCH_VERSION} \
+  torch==2.5.1 \
   torchaudio==${TORCHAUDIO_VERSION} \
   torchvision==${TORCHVISION_VERSION}
 RUN python3 -m pip install --quiet --no-cache-dir --index-url https://download.pytorch.org/whl/cu124 \
