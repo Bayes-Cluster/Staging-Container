@@ -95,10 +95,9 @@ RUN python3 -m pip install -r /tmp/requirements.txt --quiet --no-cache-dir \
 COPY --chown=${NB_USER}:${NB_GID} --chmod=755 s6/ /etc
 
 # configure - jupyter
-# NOTE: we use `--level=system` to write these configs at `/usr/local/etc/jupyter` because it defaults
-##      to `/opt/conda/etc/jupyter` and conda cleans that directory after every install
-RUN jupyter labextension disable --level=system "@jupyterlab/apputils-extension:announcements" \
- && jupyter labextension lock --level=system "@jupyterlab/apputils-extension"
+RUN mkdir -p /opt/conda/share/jupyter/lab/settings && \
+    echo '{ "@jupyterlab/apputils-extension:announcements": { "enabled": false } }' \
+    > /opt/conda/share/jupyter/lab/settings/overrides.json
 
 # s6 - 01-copy-tmp-home
 # NOTE: the contents of $HOME_TMP are copied to $HOME at runtime
