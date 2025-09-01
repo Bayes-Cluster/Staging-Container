@@ -19,6 +19,9 @@ env:
   NODE_MAJOR_VERSION: 20
   PIP_VERSION: 24.3.1
   PYTHON_VERSION: 3.11.11
+  PYTORCH_VERISON: 2.5.1
+  TORCHAUDIO_VERSION: 2.5.1
+  TORCHVISION_VERSION: 0.20.1
 
 jobs:
   build-and-push:
@@ -44,8 +47,10 @@ jobs:
     - name: Set dynamic image tag
       run: |
         echo "BASE_IMAGE_TAG=${{ env.PROJECT_NAME }}-${{ env.BASE_IMAGE }}-${{ env.BASE_IMAGE_VERSION }}" >> $GITHUB_ENV
-        echo "JUPYTER_BASE_IMAGE_TAG=${{ env.PROJECT_NAME }}-${{ env.BASE_IMAGE }}-${{ env.BASE_IMAGE_VERSION }}"-jupyter-${{ env.JUPYTER_VERSION }} >> $GITHUB_ENV
+        echo "JUPYTER_BASE_IMAGE_TAG=${{ env.PROJECT_NAME }}-${{ env.BASE_IMAGE }}-${{ env.BASE_IMAGE_VERSION }}-jupyter-${{ env.JUPYTER_VERSION }}" >> $GITHUB_ENV
+        echo "JUPYTER_CUDA_PYTORCH_IMAGE_TAG=${{ env.PROJECT_NAME }}-${{ env.BASE_IMAGE }}-${{ env.BASE_IMAGE_VERSION }}-jupyter-${{ env.JUPYTER_VERSION }}-cuda-" >> $GITHUB_ENV
 
+    ### base image    
     - name: Build base image
       run: |
         docker build \
@@ -56,6 +61,7 @@ jobs:
           kubeflow/base
         docker tag $IMAGE_NAME:$BASE_IMAGE_TAG $IMAGE_NAME:latest-base
 
+    ### jupyter-base image
     - name: Build jupyter-base image
       run: |
         docker build \
@@ -71,6 +77,18 @@ jobs:
           kubeflow/jupyter
         docker tag $IMAGE_NAME:$JUPYTER_BASE_IMAGE_TAG $IMAGE_NAME:latest-jupyter-base
 
+    - name: build jupyter-cuda-pytorch image
+      run: |
+        docker build \
+          -f kubeflow/jupyter-cuda-pytorch/Dockerfile \
+          -t $IMAGE_NAME:$JUPYTER_CUDA_PYTORCH_IMAGE_TAG \
+          --build-arg REGISTRY_PREFIX=$REGISTRY_PREFIX \
+          --build-arg PYTORCH_VERSION=$PYTORCH_VERSION \
+          --build-arg OCHAUDIO_VERSION=$TORCHAUDIO_VERSION \
+          --build-arg TORCHVISION_VERSION=$TORCHVISION_VERSION \
+          kubeflow/jupyter-cuda-pytorch
+      docker tag $IMAGE_NAME:$JUPYTER_CUDA_PYTORCH_IMAGE_TAG $IMAGE_NAME:latest-jupyter-cuda-pytorch
+
     - name: Push base image
       run: |
         docker push $IMAGE_NAME:$BASE_IMAGE_TAG
@@ -78,5 +96,10 @@ jobs:
 
     - name: Push jupyter-base image
       run: |
-        docker push $IMAGE_NAME:$PYTHON_IMAGE_TAG
-        docker push $IMAGE_NAME:latest-python
+        docker push $IMAGE_NAME:$JUPYTER_BASE_IMAGE_TAG
+        docker push $IMAGE_NAME:latest-jupyter-base
+
+    - name: Push jupyter-cuda-pytorch image
+      run: |
+        docker push $IMAGE_NAME:$JUPYTER_CUDA_PYTORCH_IMAGE_TAG
+        docker push $IMAGE_NAME:latest-jupyter-cuda-pytorch
