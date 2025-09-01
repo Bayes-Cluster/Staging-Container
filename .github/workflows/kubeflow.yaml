@@ -80,13 +80,13 @@ jobs:
     - name: build jupyter-cuda-pytorch image
       run: |
         docker build \
-          -f kubeflow/jupyter-cuda-pytorch/Dockerfile \
+          -f kubeflow/jupyter-cuda-torch/Dockerfile \
           -t $IMAGE_NAME:$JUPYTER_CUDA_PYTORCH_IMAGE_TAG \
           --build-arg REGISTRY_PREFIX=$REGISTRY_PREFIX \
           --build-arg PYTORCH_VERSION=$PYTORCH_VERSION \
           --build-arg OCHAUDIO_VERSION=$TORCHAUDIO_VERSION \
           --build-arg TORCHVISION_VERSION=$TORCHVISION_VERSION \
-          kubeflow/jupyter-cuda-pytorch
+          kubeflow/jupyter-cuda-torch
           docker tag $IMAGE_NAME:$JUPYTER_CUDA_PYTORCH_IMAGE_TAG $IMAGE_NAME:latest-jupyter-cuda-pytorch
 
     - name: Push base image
