@@ -1,70 +1,28 @@
-ARG TARGETPLATFORM
+ARG PROJECT_NAME
+ARG BASE_IMAGE_TAG
 ARG REGISTRY_PREFIX
+ARG TARGETPLATFORM
 
-FROM --platform=$TARGETPLATFORM $REGISTRY_PREFIX/kubeflow:latest-jupyter-base
+FROM --platform=$TARGETPLATFORM localhost:5000/$REGISTRY_PREFIX/$PROJECT_NAME:$BASE_IMAGE_TAG
 
-ARG PYTORCH_VERSION=2.5.1
-ARG TORCHAUDIO_VERSION=2.5.1
-ARG TORCHVISION_VERSION=0.20.1
+ARG CUDA_VERSION
+ARG PYTORCH_VERSION
+ARG TORCHAUDIO_VERSION
+ARG TORCHVISION_VERSION
 
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
-ENV NVIDIA_REQUIRE_CUDA "cuda>=12.4"
+ENV NVIDIA_REQUIRE_CUDA "cuda>=${CUDA_VERSION}"
 
-RUN python3 -m pip install --quiet --no-cache-dir --index-url https://download.pytorch.org/whl/cu124 \
-  torch==2.5.1 \
-  torchaudio==${TORCHAUDIO_VERSION} \
-  torchvision==${TORCHVISION_VERSION}
-RUN python3 -m pip install --quiet --no-cache-dir --index-url https://download.pytorch.org/whl/cu124 \
-  torch==2.5.1 \
-  torchaudio===${TORCHAUDIO_VERSION} \
-  torchvision===${TORCHVISION_VERSION}
+# install - pytorch (cuda)
+RUN python3 -m pip install --index-url https://download.pytorch.org/whl/cu124 \
+    torch==${PYTORCH_VERSION} \
+    torchaudio==${TORCHAUDIO_VERSION} \
+    torchvision==${TORCHVISION_VERSION}
 
-RUN mamba install -y -q \
-    bokeh==3.6.3 \
-    cloudpickle==3.1.1 \
-    dill==0.3.9 \
-    ipympl==0.9.6 \
-    matplotlib==3.10.0 \
-    numpy==1.26.4 \
-    pandas==2.2.3 \
-    scikit-image==0.25.1 \
-    scikit-learn==1.6.1 \
-    scipy==1.15.1 \
-    seaborn==0.13.2 \
-    xgboost==2.1.4 \
- && mamba clean -a -f -y
+# install - requirements.txt
+COPY --chown=${NB_USER}:${NB_GID} requirements.txt /tmp
+RUN python3 -m pip install -r /tmp/requirements.txt --no-cache-dir \
+ && rm -f /tmp/requirements.txt
 
-RUN mamba install -y -q \
-    bokeh==3.6.3 \
-    cloudpickle==3.1.1 \
-    dill==0.3.9 \
-    ipympl==0.9.6 \
-    matplotlib==3.10.0 \
-    numpy==1.26.4 \
-    pandas==2.2.3 \
-    scikit-image==0.25.1 \
-    scikit-learn==1.6.1 \
-    scipy==1.15.1 \
-    seaborn==0.13.2 \
-    xgboost==2.1.4 \
- && mamba clean -a -f -y
-
-RUN mamba install -y -q \
-    bokeh==3.6.3 \
-    cloudpickle==3.1.1 \
-    dill==0.3.9 \
-    ipympl==0.9.6 \
-    matplotlib==3.10.0 \
-    numpy==1.26.4 \
-    pandas==2.2.3 \
-    scikit-image==0.25.1 \
-    scikit-learn==1.6.1 \
-    scipy==1.15.1 \
-    seaborn==0.13.2 \
-    xgboost==2.1.4 \
- && mamba clean -a -f -y
-
-COPY --chown==${NB_USER}:${NB_GID} requirements.txt /tmp 
-RUN python3 -m pip install -r /tmp/requirements.txt --quiet --no-cache-dir \
-  && rm -f /tmp/requirements.txt
+RUN pip install --extra-index-url https://pypi.anaconda.org/rapidsai-wheels-nightly/simple --pre jupyterlab_nvdashboard
