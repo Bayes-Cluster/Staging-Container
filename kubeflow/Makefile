@@ -106,3 +106,7 @@ build-code-server: build-base
 		--build-arg CODESERVER_VERSION=$(CODESERVER_VERSION) \
 		code-server
 	nerdctl tag $(IMAGE_NAME):$(PROJECT_NAME)-code-server-$(CODESERVER_VERSION) $(IMAGE_NAME):latest-code-server
+
+push-code-server:
+	nerdctl push $(IMAGE_NAME):$(CODESERVER_IMAGE_TAG)
+	nerdctl push $(IMAGE_NAME):latest-code-server
