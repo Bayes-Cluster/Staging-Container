@@ -128,3 +128,8 @@ jobs:
           --build-arg CODESERVER_VERSION=$CODESERVER_VERSION \
           kubeflow/code-server
         docker tag $IMAGE_NAME:$PROJECT_NAME-code-server-$CODESERVER_VERSION $IMAGE_NAME:latest-code-server
+
+    - name: Push code-server image
+      run: |
+        docker push $IMAGE_NAME:$PROJECT_NAME-code-server-$CODESERVER_VERSION
+        docker push $IMAGE_NAME:latest-code-server
