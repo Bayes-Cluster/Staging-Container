@@ -29,8 +29,8 @@ CODESERVER_IMAGE_TAG := $(PROJECT_NAME)-$(BASE_IMAGE)-$(BASE_IMAGE_VERSION)-code
 .PHONY: all build-base push-base build-jupyter-base push-jupyter-base build-jupyter-cuda-pytorch push-jupyter-cuda-pytorch
 
 # Default target
-build-all: build-base build-jupyter-base build-jupyter-cuda-pytorch
-push-all: push-base push-jupyter-base push-jupyter-cuda-pytorch
+build-all: build-base build-jupyter-base build-jupyter-cuda-pytorch build-code-server
+push-all: push-base push-jupyter-base push-jupyter-cuda-pytorch push-code-server
 
 # Build base image
 build-base:
