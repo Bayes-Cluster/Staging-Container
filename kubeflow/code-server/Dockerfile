@@ -57,7 +57,6 @@ RUN /usr/bin/code-server --install-extension ms-python.python \
     && /usr/bin/code-server --install-extension emmanuelbeziat.vscode-great-icons \
     && /usr/bin/code-server --install-extension alexcvzz.vscode-sqlite \
     && /usr/bin/code-server --install-extension eamodio.gitlens \
-    &&   \
     && /usr/bin/code-server --install-extension Alibaba-Cloud.tongyi-lingma 
 
 RUN cp -r ${HOME}/.local/ ${HOME_TMP}/ -r \
