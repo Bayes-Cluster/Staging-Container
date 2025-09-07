@@ -50,7 +50,8 @@ jobs:
         echo "BASE_IMAGE_TAG=${{ env.PROJECT_NAME }}-${{ env.BASE_IMAGE }}-${{ env.BASE_IMAGE_VERSION }}" >> $GITHUB_ENV
         echo "JUPYTER_BASE_IMAGE_TAG=${{ env.PROJECT_NAME }}-${{ env.BASE_IMAGE }}-${{ env.BASE_IMAGE_VERSION }}-jupyter-${{ env.JUPYTER_VERSION }}" >> $GITHUB_ENV
         echo "JUPYTER_CUDA_PYTORCH_IMAGE_TAG=${{ env.PROJECT_NAME }}-${{ env.BASE_IMAGE }}-${{ env.BASE_IMAGE_VERSION }}-jupyter-${{ env.JUPYTER_VERSION }}-cuda-${{ env.CUDA_VERSION }}-pytorch-${{ env.PYTORCH_VERSION }}" >> $GITHUB_ENV
-
+        echo "CODESERVER_IMAGE_TAG=${{ env.PROJECT_NAME }}-${{ env.BASE_IMAGE }}-${{ env.BASE_IMAGE_VERSION }}-code-server-${{ env.CODESERVER_VERSION }}" >> $GITHUB_ENV
+        
     ### base image    
     - name: Build base image
       run: |
@@ -97,7 +98,7 @@ jobs:
         docker build \
           -f kubeflow/jupyter-cuda-torch/Dockerfile \
           -t $IMAGE_NAME:$JUPYTER_CUDA_PYTORCH_IMAGE_TAG \
-          --build-arg BASE_IMAGE_TAG=$BASE_IMAGE_TAG \
+          --build-arg BASE_IMAGE_TAG=$JUPYTER_BASE_IMAGE_TAG \
           --build-arg PROJECT_NAME=$PROJECT_NAME \
           --build-arg REGISTRY_PREFIX=$REGISTRY_PREFIX \
           --build-arg CUDA_VERSION=$CUDA_VERSION \
@@ -111,3 +112,19 @@ jobs:
       run: |
         docker push $IMAGE_NAME:$JUPYTER_CUDA_PYTORCH_IMAGE_TAG
         docker push $IMAGE_NAME:latest-jupyter-cuda-pytorch
+    
+    - name: Build code-server image
+      run: |
+        docker build \
+          -f kubeflow/code-server/Dockerfile \
+          -t $IMAGE_NAME:$PROJECT_NAME-code-server-$CODESERVER_VERSION \
+          --build-arg BASE_IMAGE_TAG=$BASE_IMAGE_TAG \
+          --build-arg PROJECT_NAME=$PROJECT_NAME \
+          --build-arg REGISTRY_PREFIX=$REGISTRY_PREFIX \
+          --build-arg CUDA_VERSION=$CUDA_VERSION \
+          --build-arg PYTORCH_VERSION=$PYTORCH_VERSION \
+          --build-arg TORCHAUDIO_VERSION=$TORCHAUDIO_VERSION \
+          --build-arg TORCHVISION_VERSION=$TORCHVISION_VERSION \
+          --build-arg CODESERVER_VERSION=$CODESERVER_VERSION \
+          kubeflow/code-server
+        docker tag $IMAGE_NAME:$PROJECT_NAME-code-server-$CODESERVER_VERSION $IMAGE_NAME:latest-code-server

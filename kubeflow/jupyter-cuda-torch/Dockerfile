@@ -3,7 +3,7 @@ ARG BASE_IMAGE_TAG
 ARG REGISTRY_PREFIX
 ARG TARGETPLATFORM
 
-FROM --platform=$TARGETPLATFORM localhost:5000/$REGISTRY_PREFIX/$PROJECT_NAME:$BASE_IMAGE_TAG
+FROM --platform=$TARGETPLATFORM $REGISTRY_PREFIX/$PROJECT_NAME:$BASE_IMAGE_TAG
 
 ARG CUDA_VERSION
 ARG PYTORCH_VERSION
@@ -14,6 +14,8 @@ ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 ENV NVIDIA_REQUIRE_CUDA "cuda>=${CUDA_VERSION}"
 
+USER $NB_UID
+
 # install - pytorch (cuda)
 RUN python3 -m pip install --index-url https://download.pytorch.org/whl/cu124 \
     torch==${PYTORCH_VERSION} \
@@ -23,6 +25,7 @@ RUN python3 -m pip install --index-url https://download.pytorch.org/whl/cu124 \
 # install - requirements.txt
 COPY --chown=${NB_USER}:${NB_GID} requirements.txt /tmp
 RUN python3 -m pip install -r /tmp/requirements.txt --no-cache-dir \
- && rm -f /tmp/requirements.txt
+    && rm -f /tmp/requirements.txt
+
 
 RUN pip install --extra-index-url https://pypi.anaconda.org/rapidsai-wheels-nightly/simple --pre jupyterlab_nvdashboard

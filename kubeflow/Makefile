@@ -17,11 +17,14 @@ CUDA_VERSION := 12.4
 PYTORCH_VERSION := 2.5.1
 TORCHAUDIO_VERSION := 2.5.1
 TORCHVISION_VERSION := 0.20.1
+CODESERVER_VERSION := 4.103.2
+
 
 # Dynamic image tags
 BASE_IMAGE_TAG := $(PROJECT_NAME)-$(BASE_IMAGE)-$(BASE_IMAGE_VERSION)
 JUPYTER_BASE_IMAGE_TAG := $(PROJECT_NAME)-$(BASE_IMAGE)-$(BASE_IMAGE_VERSION)-jupyter-$(JUPYTER_VERSION)
 JUPYTER_CUDA_PYTORCH_IMAGE_TAG := $(PROJECT_NAME)-$(BASE_IMAGE)-$(BASE_IMAGE_VERSION)-jupyter-$(JUPYTER_VERSION)-cuda-$(CUDA_VERSION)-pytorch-$(PYTORCH_VERSION)
+CODESERVER_IMAGE_TAG := $(PROJECT_NAME)-$(BASE_IMAGE)-$(BASE_IMAGE_VERSION)-code-server-$(CODESERVER_VERSION)
 
 .PHONY: all build-base push-base build-jupyter-base push-jupyter-base build-jupyter-cuda-pytorch push-jupyter-cuda-pytorch
 
@@ -74,7 +77,7 @@ build-jupyter-cuda-pytorch: build-jupyter-base
 	nerdctl build \
 		-f jupyter-cuda-torch/Dockerfile \
 		-t $(IMAGE_NAME):$(JUPYTER_CUDA_PYTORCH_IMAGE_TAG) \
-		--build-arg BASE_IMAGE_TAG=$(BASE_IMAGE_TAG) \
+		--build-arg BASE_IMAGE_TAG=$(JUPYTER_BASE_IMAGE_TAG) \
 		--build-arg PROJECT_NAME=$(PROJECT_NAME) \
 		--build-arg REGISTRY_PREFIX=$(REGISTRY_PREFIX) \
 		--build-arg CUDA_VERSION=$(CUDA_VERSION) \
@@ -88,3 +91,18 @@ build-jupyter-cuda-pytorch: build-jupyter-base
 push-jupyter-cuda-pytorch:
 	nerdctl push $(IMAGE_NAME):$(JUPYTER_CUDA_PYTORCH_IMAGE_TAG)
 	nerdctl push $(IMAGE_NAME):latest-jupyter-cuda-pytorch
+
+build-code-server: build-base
+	nerdctl build \
+		-f code-server/Dockerfile \
+		-t $(IMAGE_NAME):$(CODESERVER_IMAGE_TAG) \
+		--build-arg BASE_IMAGE_TAG=$(BASE_IMAGE_TAG) \
+		--build-arg PROJECT_NAME=$(PROJECT_NAME) \
+		--build-arg REGISTRY_PREFIX=$(REGISTRY_PREFIX) \
+		--build-arg CUDA_VERSION=$(CUDA_VERSION) \
+		--build-arg PYTORCH_VERSION=$(PYTORCH_VERSION) \
+		--build-arg TORCHAUDIO_VERSION=$(TORCHAUDIO_VERSION) \
+		--build-arg TORCHVISION_VERSION=$(TORCHVISION_VERSION) \
+		--build-arg CODESERVER_VERSION=$(CODESERVER_VERSION) \
+		code-server
+	nerdctl tag $(IMAGE_NAME):$(PROJECT_NAME)-code-server-$(CODESERVER_VERSION) $(IMAGE_NAME):latest-code-server
