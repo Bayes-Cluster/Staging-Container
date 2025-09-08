@@ -77,11 +77,11 @@ RUN chmod g+rw /home && \
 
 USER ${USERNAME}
 
-WORKDIR /home/${USERNAME}/srv/
+WORKDIR /home/${USERNAME}/srv
 
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
-    HOME=/home/${USERNAME} \
+    HOME=/home/${USERNAME}/srv \
     EDITOR=code \
     VISUAL=code \
     GIT_EDITOR="code --wait" \
@@ -90,8 +90,4 @@ ENV LANG=C.UTF-8 \
 
 EXPOSE 3000
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
-
-#ENTRYPOINT [ "/bin/sh", "-c", "exec ${OPENVSCODE_SERVER_ROOT}/bin/openvscode-server --host 0.0.0.0 --without-connection-token \"${@}\"", "--" ]
+ENTRYPOINT [ "/bin/sh", "-c", "exec ${OPENVSCODE_SERVER_ROOT}/bin/openvscode-server --host 0.0.0.0 --without-connection-token \"${@}\"", "--" ]

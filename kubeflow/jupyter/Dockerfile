@@ -1,17 +1,15 @@
-ARG TARGETPLATFORM
+ARG PROJECT_NAME
+ARG BASE_IMAGE_TAG
 ARG REGISTRY_PREFIX
 ARG TARGETPLATFORM
 
-FROM --platform=$TARGETPLATFORM $REGISTRY_PREFIX/kubeflow:latest-base
+FROM --platform=$TARGETPLATFORM $REGISTRY_PREFIX/$PROJECT_NAME:$BASE_IMAGE_TAG
 
 USER root
 
 ARG JUPYTER_VERSION
 ARG JUPYTERLAB_VERSION
-ARG MINIFORGE_VERSION
 ARG NODE_MAJOR_VERSION
-ARG PIP_VERSION
-ARG PYTHON_VERSION
 
 # install -- node.js
 RUN export DEBIAN_FRONTEND=noninteractive \
@@ -24,7 +22,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
  && rm -rf /var/lib/apt/lists/*
 
  # install - usefull linux packages
-RUN apt-get -yq update \
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* \
+ && apt-get -yq update --fix-missing \
  && apt-get -yq install --no-install-recommends \
     # for latex
     cm-super \
@@ -34,18 +33,6 @@ RUN apt-get -yq update \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
-# setup environment for conda
-ENV CONDA_DIR /opt/conda
-ENV PATH "${CONDA_DIR}/bin:${PATH}"
-RUN mkdir -pv ${CONDA_DIR} \
- && chmod 2775 ${CONDA_DIR} \
- && echo ". /opt/conda/etc/profile.d/conda.sh" >> ${HOME}/.bashrc \
- && echo ". /opt/conda/etc/profile.d/conda.sh" >> /etc/profile \
- && echo "conda activate base" >> ${HOME}/.bashrc \
- && echo "conda activate base" >> /etc/profile \
- && chown -R ${NB_USER}:${NB_GID} ${CONDA_DIR} \
- && chown -R ${NB_USER}:${USERS_GID} ${HOME}
-
 # create the SYSTEM_CONFIG_PATH for jupyter, and make it owned by NB_USER
 # this is needed for jupyter to write `--level=system` configs
 RUN mkdir -pv /usr/local/etc/jupyter \
@@ -53,30 +40,6 @@ RUN mkdir -pv /usr/local/etc/jupyter \
 
 # switch to NB_UID for installs
 USER $NB_UID
-
-# install - conda, pip, python, jupyter
-ARG TARGETPLATFORM
-RUN TARGETARCH=$(echo "$TARGETPLATFORM" | cut -d '/' -f2) \
-    && case "${TARGETARCH}" in \
-      amd64) MINIFORGE_ARCH="x86_64" ;; \
-      arm64) MINIFORGE_ARCH="aarch64" ;; \
-      ppc64le) MINIFORGE_ARCH="ppc64le" ;; \
-      *) echo "Unsupported architecture: ${TARGETARCH}"; exit 1 ;; \
-    esac \
- && curl -fsSL "https://github.com/conda-forge/miniforge/releases/download/${MINIFORGE_VERSION}/Miniforge3-${MINIFORGE_VERSION}-Linux-${MINIFORGE_ARCH}.sh" -o /tmp/Miniforge3.sh \
- && curl -fsSL "https://github.com/conda-forge/miniforge/releases/download/${MINIFORGE_VERSION}/Miniforge3-${MINIFORGE_VERSION}-Linux-${MINIFORGE_ARCH}.sh.sha256" -o /tmp/Miniforge3.sh.sha256 \
- && echo "$(cat /tmp/Miniforge3.sh.sha256 | awk '{ print $1; }')  /tmp/Miniforge3.sh" | sha256sum -c - \
- && rm /tmp/Miniforge3.sh.sha256 \
- && /bin/bash /tmp/Miniforge3.sh -b -f -p ${CONDA_DIR} \
- && rm /tmp/Miniforge3.sh \
- && conda config --system --set auto_update_conda false \
- && conda config --system --set show_channel_urls true \
- && echo "python ==${PYTHON_VERSION}" >> ${CONDA_DIR}/conda-meta/pinned \
- && conda install -y -q \
-    python=${PYTHON_VERSION} \
-    pip=${PIP_VERSION} \
- && conda update -y -q --all \
- && conda clean -a -f -y
 
 # install - jupyter
 RUN echo "jupyterlab ==${JUPYTERLAB_VERSION}" >> ${CONDA_DIR}/conda-meta/pinned \
@@ -95,10 +58,9 @@ RUN python3 -m pip install -r /tmp/requirements.txt --quiet --no-cache-dir \
 COPY --chown=${NB_USER}:${NB_GID} --chmod=755 s6/ /etc
 
 # configure - jupyter
-# NOTE: we use `--level=system` to write these configs at `/usr/local/etc/jupyter` because it defaults
-##      to `/opt/conda/etc/jupyter` and conda cleans that directory after every install
-RUN jupyter labextension disable --level=system "@jupyterlab/apputils-extension:announcements" \
- && jupyter labextension lock --level=system "@jupyterlab/apputils-extension"
+RUN mkdir -p /opt/conda/share/jupyter/lab/settings && \
+    echo '{ "@jupyterlab/apputils-extension:announcements": { "enabled": false } }' \
+    > /opt/conda/share/jupyter/lab/settings/overrides.json
 
 # s6 - 01-copy-tmp-home
 # NOTE: the contents of $HOME_TMP are copied to $HOME at runtime
