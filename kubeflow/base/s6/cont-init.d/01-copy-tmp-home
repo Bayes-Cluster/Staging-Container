@@ -6,5 +6,5 @@ echo "INFO: Ensuring proper ownership of '$HOME'..."
 sudo chown -R "${NB_USER}:${USERS_GID}" "$HOME"
 
 echo "INFO: Copying contents of '$HOME_TMP' to '$HOME'..."
-cp --update=none -r -T "$HOME_TMP" "$HOME"
-rm -rf $HOME/.conda && cp --update=none -r -T ${HOME_TMP}/.conda "$PERSISTENT_DIR/.conda"
+cp -n -r -T "$HOME_TMP" "$HOME"
+rm -rf $HOME/.conda && cp -n -r -T ${HOME_TMP}/.conda "$PERSISTENT_DIR/.conda"
