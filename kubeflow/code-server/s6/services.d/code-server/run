@@ -11,7 +11,7 @@ echo "INFO: Copying contents of '$HOME_TMP' to '$HOME'..."
 cp -n -r -T "$HOME_TMP" "$HOME"
 rm -rf $HOME/.conda && cp -n -r -T ${HOME_TMP}/.conda "$PERSISTENT_DIR/.conda"
 
-cd "${HOME}" || { echo "ERROR: failed to cd to ${HOME}"; exit 1; }
+cd "${PERSISTENT_DIR}" || { echo "ERROR: failed to cd to ${PERSISTENT_DIR}"; exit 1; }
 echo "INFO: starting code-server..."
 exec 2>&1
 exec /usr/bin/code-server \
@@ -22,4 +22,4 @@ exec /usr/bin/code-server \
   --disable-getting-started-override \
   --auth none \
   --trusted-origins "*" \
-  "${HOME}"
+  "${PERSISTENT_DIR}"

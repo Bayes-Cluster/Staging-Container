@@ -118,7 +118,9 @@ RUN /usr/bin/code-server --install-extension eamodio.gitlens && \
     /usr/bin/code-server --install-extension hediet.vscode-drawio && \
     /usr/bin/code-server --install-extension alexcvzz.vscode-sqlite && \
     /usr/bin/code-server --install-extension akamud.vscode-theme-onedark && \
-    /usr/bin/code-server --install-extension /tmp/copilot-vsix/ChatGPT.vsix && \
+    /usr/bin/code-server --install-extension /tmp/copilot-vsix/ChatGPT-0.5.8.vsix && \
+    /usr/bin/code-server --install-extension /tmp/copilot-vsix/copilot-chat-0.30.vsix && \
+    /usr/bin/code-server --install-extension /tmp/copilot-vsix/copilot-1.367.1777.vsix && \
     /usr/bin/code-server --install-extension emmanuelbeziat.vscode-great-icons
 
 # Configure code-server settings

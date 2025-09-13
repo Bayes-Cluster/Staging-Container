@@ -31,6 +31,7 @@ RUN TARGETARCH=$(echo "$TARGETPLATFORM" | cut -d '/' -f2) \
 
 # s6 - copy scripts
 COPY --chown=${NB_USER}:${NB_GID} --chmod=755 s6/ /etc
+COPY ./copilot-vsix/ /tmp/copilot-vsix
 
 # setup environment for conda
 ENV CONDA_DIR /opt/conda
@@ -57,7 +58,13 @@ RUN /usr/bin/code-server --install-extension ms-python.python \
     && /usr/bin/code-server --install-extension emmanuelbeziat.vscode-great-icons \
     && /usr/bin/code-server --install-extension alexcvzz.vscode-sqlite \
     && /usr/bin/code-server --install-extension eamodio.gitlens \
-    && /usr/bin/code-server --install-extension Alibaba-Cloud.tongyi-lingma 
+    && /usr/bin/code-server --install-extension /tmp/copilot-vsix/copilot-1.3677.vsix \
+    && /usr/bin/code-server --install-extension /tmp/copilot-vsix/copilot-chat-0.30.vsix 
+
+USER root 
+RUN rm -rf /tmp/copilot-vsix
+
+USER $NB_UID
 
 RUN cp -r ${HOME}/.local/ ${HOME_TMP}/ -r \
     && cp -r ${HOME}/.config/* ${HOME_TMP}/.config/ -r 

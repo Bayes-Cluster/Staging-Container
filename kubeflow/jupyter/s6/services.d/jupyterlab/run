@@ -12,11 +12,11 @@ chmod 700 "${XDG_RUNTIME_DIR}"
 # note, jupyter ignores XDG_RUNTIME_DIR: https://github.com/jupyter/jupyter_core/pull/143
 export JUPYTER_RUNTIME_DIR="/tmp/jupyter_runtime"
 
-cd "${HOME}" || { echo "ERROR: failed to cd to ${HOME}"; exit 1; }
+cd "${PERSISTENT_DIR}" || { echo "ERROR: failed to cd to ${PERSISTENT_DIR}"; exit 1; }
 echo "INFO: starting jupyter..."
 exec 2>&1
 exec /opt/conda/bin/jupyter lab \
-  --notebook-dir="${HOME}" \
+  --notebook-dir="${PERSISTENT_DIR}" \
   --ip=0.0.0.0 \
   --no-browser \
   --allow-root \

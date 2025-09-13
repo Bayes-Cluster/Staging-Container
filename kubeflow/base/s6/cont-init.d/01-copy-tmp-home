@@ -2,8 +2,8 @@
 
 umask 0002
 
-echo "INFO: Ensuring proper ownership of '$HOME'..."
-sudo chown -R "${NB_USER}:${USERS_GID}" "$HOME"
+#echo "INFO: Ensuring proper ownership of '$HOME'..."
+#sudo chown -R "${NB_USER}:${USERS_GID}" "$HOME"
 
 echo "INFO: Copying contents of '$HOME_TMP' to '$HOME'..."
 cp -n -r -T "$HOME_TMP" "$HOME"
